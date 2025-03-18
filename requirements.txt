@@ -1,0 +1,6 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+SQLAlchemy==1.4.52
+marshmallow==3.21.1
+pydantic==2.6.4
+email-validator==2.1.1
