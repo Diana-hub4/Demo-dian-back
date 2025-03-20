@@ -1,6 +1,8 @@
+# src/database.py
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.models import Base
+from src.models.base import Base  # Importar Base desde base.py
 
 # Configuración de DB (ajusta tu string de conexión)
 DATABASE_URL = "sqlite:///./HANA.db"
