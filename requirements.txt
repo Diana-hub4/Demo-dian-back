@@ -4,3 +4,5 @@ SQLAlchemy==1.4.52
 marshmallow==3.21.1
 pydantic==2.6.4
 email-validator==2.1.1
+werkzeug==2.0.2
+dotenv==0.9.9
