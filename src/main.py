@@ -3,8 +3,9 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from src.database import SessionSql, init_db, get_db
-from src.models import User, UserJsonSchema
+from src.models.login import User
 from src.routes import user_routes  # Asumiendo que pusiste el endpoint en user_routes.py
+from src.models import register, RegisterJsonSchema, register  # Cambia User por Register
 
 app = FastAPI()
 
@@ -28,6 +29,6 @@ app.include_router(user_routes.router)
 
 @app.get("/users/")
 def read_users(db: Session = Depends(get_db)):
-    users = db.query(User).all()
-    schema = UserJsonSchema(many=True)
+    users = db.query(register).all()
+    schema = RegisterJsonSchema(many=True)
     return schema.dump(users)

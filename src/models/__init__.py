@@ -1,6 +1,5 @@
 # src/models/__init__.py
 
-from .register import Register, RegisterJsonSchema
 from .clients import Client, ClientJsonSchema
 from .taxes import Tax, TaxJsonSchema
 from .paymentsTransfers import PaymentsTransfers, PaymentsTransfersJsonSchema
@@ -9,3 +8,4 @@ from .generator import Generator
 from .login import Login
 from .dianVerification import DianVerification
 from .model import Model
+from .register import Register, RegisterJsonSchema
