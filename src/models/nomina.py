@@ -16,7 +16,6 @@ class Nomina(Model, Base):
     deductions = Column(Float, default=0.0)  # Deducciones (sanciones, descuentos, etc.)
     email = Column(String(255), nullable=False)  # Correo electrónico del empleado
     contributions = Column(Float, nullable=False)  # Aportes (salud, pensión, ARL, etc.)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))  # Fecha de creación de la nómina
 
     def __init__(self, id_user, contract_type, period, employee_name, salary, deductions, email, contributions):
         Model.__init__(self)
@@ -40,7 +39,6 @@ class NominaJsonSchema(Schema):
     deductions = fields.Float()
     email = fields.Str()
     contributions = fields.Float()
-    created_at = fields.DateTime()
 
 # Función para crear una nueva nómina
 def create_nomina(id_user, contract_type, period, employee_name, salary, deductions, email, contributions):
