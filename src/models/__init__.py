@@ -7,5 +7,5 @@ from .invoicesReceipts import InvoicesReceipts, InvoicesReceiptsJsonSchema
 from .generator import Generator
 from .login import Login
 from .dianVerification import DianVerification
-from .model import Model
+from .model import Base
 from .register import Register, RegisterJsonSchema

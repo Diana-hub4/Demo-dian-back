@@ -1,21 +1,19 @@
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, Enum, DateTime
-from .model import Model
+from .model import Model, Base
 from marshmallow import Schema, fields
 from werkzeug.security import generate_password_hash, check_password_hash  # type: ignore # Para encriptar y verificar contraseñas
 from dotenv import load_dotenv  # type: ignore # Para cargar variables de entorno
 import os
-from .base import Base  # Importar Base desde base.py
 
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
 # Palabra secreta para encriptar (puedes quemarla o traerla de .env)
-SECRET_KEY = os.getenv("SECRET_KEY", "mi_palabra_secreta")  # Usa una palabra secreta por defecto si no hay .env
+SECRET_KEY = os.getenv("SECRET_KEY", "Diana_Sar")  # Usa una palabra secreta por defecto si no hay .env
 
-# Tabla para almacenar la información del usuario (registro)
-class Register(Base):
+class Register(Model, Base):
     __tablename__ = 'register'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -25,8 +23,7 @@ class Register(Base):
     identification_number = Column(String(255), nullable=False)  # Cédula o NIT
     email = Column(String(255), unique=True, nullable=False)  # Correo electrónico único
     permissions = Column(Enum('develop', 'accountant', 'client', 'total'), nullable=False)  # Permisos del usuario
-    password_hash = Column(String(128), nullable=False)  # Contraseña encriptada
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))  # Fecha de creación del registro
+    password = Column(String(128), nullable=False)  # Contraseña encriptada
 
     def __init__(self, name, last_name, role, identification_number, email, permissions, password):
         Model.__init__(self)
@@ -40,11 +37,11 @@ class Register(Base):
 
     def set_password(self, password):
         """Encripta la contraseña y la almacena en el campo password_hash."""
-        self.password_hash = generate_password_hash(password)
+        self.password = generate_password_hash(password)
 
-    def check_password(self, password):
+    def check_password(self, passw):
         """Verifica si la contraseña proporcionada coincide con la almacenada."""
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password, passw)
 
 # Esquema para serializar/deserializar la tabla Register
 class RegisterJsonSchema(Schema):
@@ -56,7 +53,6 @@ class RegisterJsonSchema(Schema):
     email = fields.Str()
     permissions = fields.Str()
     password = fields.Str(load_only=True)  # Solo para recibir datos, no se incluye en la salida
-    created_at = fields.DateTime()
 
 # Función para registrar un nuevo usuario
 def register_user(name, last_name, role, identification_number, email, permissions, password):
