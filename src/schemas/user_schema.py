@@ -4,6 +4,9 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
+from src import routes
+@routes.post("/users/", response_model=None)
+
 class RegisterJsonSchema(BaseModel):
     name: str
     last_name: str
@@ -16,3 +19,5 @@ class RegisterJsonSchema(BaseModel):
 
     class Config:
         from_attributes = True  # Para compatibilidad con SQLAlchemy
+
+
