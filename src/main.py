@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Depends, Body
+# src/main.py
+
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from src.database import SessionSql, init_db, get_db
 from src.models import User, UserJsonSchema

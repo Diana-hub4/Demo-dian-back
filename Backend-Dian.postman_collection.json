@@ -1,0 +1,37 @@
+{
+	"info": {
+		"_postman_id": "0fd31b80-7ef6-4993-a63e-f3cb11c90bff",
+		"name": "Backend-Dian",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38826606"
+	},
+	"item": [
+		{
+			"name": "get user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://127.0.0.1:8000/users"
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"John\",\r\n  \"last_name\": \"Doe\",\r\n  \"role\": \"client\",\r\n  \"identification_number\": \"123456789\",\r\n  \"email\": \"john.doe@example.com\",\r\n  \"permissions\": \"client\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://127.0.0.1:8000/users"
+			},
+			"response": []
+		}
+	]
+}
