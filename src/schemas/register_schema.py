@@ -4,8 +4,6 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
-from src import routes
-@routes.post("/users/", response_model=None)
 
 class RegisterJsonSchema(BaseModel):
     name: str
@@ -14,8 +12,7 @@ class RegisterJsonSchema(BaseModel):
     identification_number: str
     email: EmailStr
     permissions: str
-    password: str  # La contraseña se encriptará en el modelo
-    created_at: Optional[datetime] = None  # Opcional, se genera automáticamente
+    password: str  
 
     class Config:
         from_attributes = True  # Para compatibilidad con SQLAlchemy
