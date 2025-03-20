@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from src.database import get_db
-from src.models.register import Register  # Importar Register desde register.py
-from src.schemas.register_schema import RegisterJsonSchema  # type: ignore # Importar RegisterJsonSchema desde register_schema.py
+from src.models.register import Register, RegisterJsonSchema
 
 router = APIRouter()
 
