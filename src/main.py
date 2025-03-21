@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from src.database import SessionSql, init_db, get_db
 from src.models.register import Register, RegisterJsonSchema
 from src.routes import register_routes  
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
@@ -31,3 +33,12 @@ def read_users(db: Session = Depends(get_db)):
     register = db.query(Register).all()
     schema = RegisterJsonSchema(many=True)
     return schema.dump(register)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Define el origen de las peticiones permitidas
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos HTTP (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],  # Permite todos los headers
+)
