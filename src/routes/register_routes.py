@@ -8,6 +8,7 @@ router = APIRouter()
 
 @router.post("/users/")
 def create_user(register: RegisterJsonSchema, db: Session = Depends(get_db)):
+    print("📩 Body recibido:", register.dict())  
     # Verificar si el correo electrónico ya está registrado
     existing_user_email = db.query(Register).filter(Register.email == register.email).first()
     existing_user_identification_number = db.query(Register).filter(Register.email == register.email).first()
