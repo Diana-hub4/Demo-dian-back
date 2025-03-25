@@ -5,7 +5,7 @@ from src.business_logic.forgot_password_logic import request_password_reset, res
 from src.database import get_db  # Import absoluto
 from src.utils.exceptions import handle_exceptions  # Import absoluto
 
-router = APIRouter(tags=["Password Recovery"])
+router = APIRouter()
 
 @router.post("/forgot-password")
 @handle_exceptions
