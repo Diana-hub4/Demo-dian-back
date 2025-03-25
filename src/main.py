@@ -4,8 +4,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from src.database import SessionSql, init_db, get_db
 from src.models.register import Register, RegisterJsonSchema
-from src.routes import register_routes  
-from src.routes import login_routes 
+from src.routes import login_routes, forgot_password_routes, register_routes  
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -22,6 +21,7 @@ def startup():
 # Endpoint de prueba para insertar y obtener usuarios
 app.include_router(register_routes.router)
 app.include_router(login_routes.router)
+app.include_router(forgot_password_routes.router)
 
 @app.get("/users/")
 def read_users(db: Session = Depends(get_db)):
