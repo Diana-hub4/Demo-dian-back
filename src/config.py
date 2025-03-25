@@ -14,3 +14,4 @@ class Config:
     MAIL_USERNAME = os.getenv('MAIL_USERNAME', 'tu_correo@gmail.com')  # Correo electrónico
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', 'tu_contraseña')  # Contraseña del correo
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', 'tu_correo@gmail.com')  # Correo remitente
+    SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
