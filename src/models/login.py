@@ -1,9 +1,13 @@
 import uuid
 from datetime import datetime, timezone
+from fastapi import HTTPException
 from sqlalchemy import Column, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
+
+from src.schemas.register_schema import RegisterJsonSchema
 from .model import Model, Base
 from marshmallow import Schema, fields
+from src.models.register import Register
 from werkzeug.security import generate_password_hash, check_password_hash  # type: ignore # Para manejar contraseñas seguras
 
 # Tabla para almacenar la información del usuario (correo electrónico y contraseña)
@@ -56,12 +60,16 @@ class LoginJsonSchema(Schema):
     login_date = fields.DateTime()
 
 # Función para autenticar al usuario
-def authenticate_user(email, password):
+def authenticate_user(email, password,db):
     """
     Autentica a un usuario verificando su correo electrónico y contraseña.
     Retorna el objeto User si las credenciales son válidas, de lo contrario retorna None.
     """
-    user = User.query.filter_by(email=email).first()  # Busca al usuario por correo electrónico
+    try: 
+        user = db.query(Register).filter_by(email=email).first() 
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
     if user and user.check_password(password):  # Verifica la contraseña
         return user
     return None

@@ -39,9 +39,9 @@ class Register(Model, Base):
         """Encripta la contraseña y la almacena en el campo password_hash."""
         self.password = generate_password_hash(password)
 
-    def check_password(self, passw):
+    def check_password(self, password):
         """Verifica si la contraseña proporcionada coincide con la almacenada."""
-        return check_password_hash(self.password, passw)
+        return check_password_hash(self.password, password)
 
 # Esquema para serializar/deserializar la tabla Register
 class RegisterJsonSchema(Schema):
@@ -77,13 +77,3 @@ def register_user(name, last_name, role, identification_number, email, permissio
     )
     return new_user
 
-# Función para autenticar un usuario
-def authenticate_user(email, password):
-    """
-    Autentica a un usuario verificando su correo electrónico y contraseña.
-    Retorna el objeto Register si las credenciales son válidas, de lo contrario retorna None.
-    """
-    user = Register.query.filter_by(email=email).first()  # Busca al usuario por correo electrónico
-    if user and user.check_password(password):  # Verifica la contraseña
-        return user
-    return None

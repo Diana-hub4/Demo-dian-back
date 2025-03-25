@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from src.database import SessionSql, init_db, get_db
 from src.models.register import Register, RegisterJsonSchema
 from src.routes import register_routes  
+from src.routes import login_routes 
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -17,16 +18,10 @@ def startup():
     init_db()
     print("Base de datos lista.")
 
-# Dependency para obtener sesión de la DB
-def get_db():
-    db = SessionSql()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Endpoint de prueba para insertar y obtener usuarios
 app.include_router(register_routes.router)
+app.include_router(login_routes.router)
 
 @app.get("/users/")
 def read_users(db: Session = Depends(get_db)):
