@@ -16,13 +16,13 @@
 			"response": []
 		},
 		{
-			"name": "New Request",
+			"name": "Create User",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"John\",\r\n  \"last_name\": \"Doe\",\r\n  \"role\": \"client\",\r\n  \"identification_number\": \"123456789\",\r\n  \"email\": \"john.doe@example.com\",\r\n  \"permissions\": \"client\"\r\n}",
+					"raw": "{\r\n  \"name\": \"John\",\r\n  \"last_name\": \"Doe\",\r\n  \"role\": \"client\",\r\n  \"identification_number\": \"123456789\",\r\n  \"email\": \"john.doe@example.com\",\r\n  \"permissions\": \"client\",\r\n  \"password\":\"Diana1234\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -30,6 +30,24 @@
 					}
 				},
 				"url": "http://127.0.0.1:8000/users"
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"2@gov.com\",\r\n    \"password\":\"1234567892\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://127.0.0.1:8000/login"
 			},
 			"response": []
 		}

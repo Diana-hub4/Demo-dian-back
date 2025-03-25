@@ -11,11 +11,11 @@ class UserRequest(BaseModel):
 class UserResponse(BaseModel):
     id: str = Field(..., description="ID único del usuario")
     email: str = Field(..., description="Correo electrónico del usuario")
-    created_at: datetime = Field(..., description="Fecha de creación del usuario")
 
 # Modelo de solicitud para registrar un inicio de sesión
 class LoginRequest(BaseModel):
-    id_user: str = Field(..., description="ID del usuario que inició sesión")
+    email: str = Field(..., description="Correo electrónico del usuario")
+    password: str = Field(..., description="Contraseña del usuario")
 
 # Modelo de respuesta para el inicio de sesión
 class LoginResponse(BaseModel):

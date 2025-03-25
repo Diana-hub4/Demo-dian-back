@@ -9,20 +9,13 @@ from ..database import get_db
 
 router = APIRouter()
 
-# Dependencia para obtener la sesión de la base de datos
-def get_db():
-    db = Session()
-    try:
-        yield db
-    finally:
-        db.close()
-
 # Endpoint para loguear un user
 @router.post("/login")
-async def login_user(login_request: LoginRequest, db: Session = Depends(get_db)):
+def login_user(login_request: LoginRequest, db: Session = Depends(get_db)):
     try:
         # Autenticar al usuario
-        user = authenticate_user(login_request.email, login_request.password)
+        user = authenticate_user(login_request.email, login_request.password, db)
+        print("authenticate_user", user)
         if not user:
             raise HTTPException(status_code=401, detail="Correo electrónico o contraseña incorrectos")
 
@@ -39,7 +32,7 @@ async def login_user(login_request: LoginRequest, db: Session = Depends(get_db))
 
 # Endpoint para obtener todos los inicios de sesión de un usuario
 @router.get("/logins/{user_id}", response_model=List[LoginResponse])
-async def get_user_logins(user_id: str, db: Session = Depends(get_db)):
+def get_user_logins(user_id: str, db: Session = Depends(get_db)):
     try:
         logins = db.query(Login).filter(Login.id_user == user_id).all()
         return logins
