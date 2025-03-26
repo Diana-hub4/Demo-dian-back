@@ -6,6 +6,8 @@ from src.database import SessionSql, init_db, get_db
 from src.models.register import Register, RegisterJsonSchema
 from src.routes import login_routes, forgot_password_routes, register_routes  
 from fastapi.middleware.cors import CORSMiddleware
+from .business_logic.forgot_password_logic import request_password_reset
+from .schemas.forgot_password_schemas import ForgotPasswordRequest
 
 
 app = FastAPI()

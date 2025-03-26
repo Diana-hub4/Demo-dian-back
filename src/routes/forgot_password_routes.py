@@ -9,20 +9,15 @@ router = APIRouter()
 
 @router.post("/forgot-password")
 @handle_exceptions
-async def forgot_password(
+def forgot_password(
     request: ForgotPasswordRequest, 
     db: Session = Depends(get_db)
 ):
-    """
-    Solicita un enlace para restablecer la contraseña.
-    Siempre devuelve 200 para no revelar si el email existe o no.
-    """
-    request_password_reset(db, request)
-    return {"message": "Si el email existe, se ha enviado un enlace para restablecer la contraseña"}
+   return {"message": f"Email recibido: {request.email}"}
 
 @router.post("/reset-password")
 @handle_exceptions
-async def reset_password_endpoint(
+def reset_password_endpoint(
     request: ResetPasswordRequest, 
     db: Session = Depends(get_db)
 ):
