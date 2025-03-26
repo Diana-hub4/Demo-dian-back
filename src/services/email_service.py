@@ -1,7 +1,15 @@
+
 import sendgrid
+from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from ..config import settings
 def send_password_reset_email(email: str, token: str):
+    print(f"Enviando email a {email}")
+    print(f"Token: {token}")
+    print(f"API Key: {settings.SENDGRID_API_KEY}")
+    print(f"Email From: {settings.EMAIL_FROM}")
+    print(f"Frontend URL: {settings.FRONTEND_URL}")
+    print(f"Access Token Expire Minutes: {settings.ACCESS_TOKEN_EXPIRE_MINUTES}")
     reset_url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
     
     message = Mail(
@@ -18,7 +26,8 @@ def send_password_reset_email(email: str, token: str):
     )
     
     try:
-        response = sg.send(message)
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)  # Inicializa el cliente
+        response = sg.send(message)  # Llama al método correcto
         return response
     except Exception as e:
         print(f"Error enviando email: {str(e)}")

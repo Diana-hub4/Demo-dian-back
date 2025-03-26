@@ -18,7 +18,10 @@ class Config:
 
 class Settings:
     SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY")
-    EMAIL_FROM: str = "no-reply@tudominio.com"
-    FRONTEND_URL: str = "https://tufrontend.com"
+    EMAIL_FROM: str = "camilasarmientombl@gmail.com"
+    FRONTEND_URL: str = "http://localhost:4200"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    SECRET_KEY: str = os.getenv("SECRET_KEY")
+    ALGORITHM: str = "HS256"
 
 settings = Settings()

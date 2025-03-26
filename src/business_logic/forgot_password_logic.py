@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-import secrets
 from src.models.forgot_password import PasswordResetToken  # Import absoluto
 from src.models.register import Register
 from src.schemas.forgot_password_schemas import ForgotPasswordRequest, ResetPasswordRequest  # Import absoluto
@@ -25,8 +24,10 @@ def request_password_reset(db: Session, request: ForgotPasswordRequest):
     # Verificar si el usuario existe
     user = db.query(Register).filter(Register.email == request.email).first()
     if not user:
+        print("Usuario no encontrado")
         return
     
+    print("Usuario encontrado")
     # Invalidar tokens previos para este email
     db.query(PasswordResetToken).filter(
         PasswordResetToken.email == request.email,

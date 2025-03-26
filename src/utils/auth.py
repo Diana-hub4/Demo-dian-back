@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from jose import jwt
+import jwt
 from src.config import settings
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
