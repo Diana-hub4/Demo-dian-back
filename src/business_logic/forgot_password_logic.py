@@ -25,8 +25,10 @@ def request_password_reset(db: Session, request: ForgotPasswordRequest):
     # Verificar si el usuario existe
     user = db.query(Register).filter(Register.email == request.email).first()
     if not user:
+        print("Usuario no encontrado")
         return
     
+    print("Usuario encontrado")
     # Invalidar tokens previos para este email
     db.query(PasswordResetToken).filter(
         PasswordResetToken.email == request.email,
