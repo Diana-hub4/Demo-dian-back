@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-import secrets
 from src.models.forgot_password import PasswordResetToken  # Import absoluto
 from src.models.register import Register
 from src.schemas.forgot_password_schemas import ForgotPasswordRequest, ResetPasswordRequest  # Import absoluto
