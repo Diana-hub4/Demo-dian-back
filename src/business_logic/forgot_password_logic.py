@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from src.models.forgot_password import PasswordResetToken  # Import absoluto
-from src.models.register import Register
+from src.models.register import User
 from src.schemas.forgot_password_schemas import ForgotPasswordRequest, ResetPasswordRequest  # Import absoluto
 from src.models.login import User  # Import absoluto
 from src.services.email_service import send_password_reset_email  # Import absoluto
@@ -22,7 +22,7 @@ def reset_password(db: Session, request: ResetPasswordRequest):
     
 def request_password_reset(db: Session, request: ForgotPasswordRequest):
     # Verificar si el usuario existe
-    user = db.query(Register).filter(Register.email == request.email).first()
+    user = db.query(User).filter(User.email == request.email).first()
     if not user:
         print("Usuario no encontrado")
         return

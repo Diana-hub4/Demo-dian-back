@@ -2,8 +2,7 @@
 from typing import List
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, HTTPException, Depends
-from datetime import datetime, timezone
-from ..models.login import User, Login, authenticate_user, register_login
+from ..models.login import Login, authenticate_user, register_login
 from ..schemas.login_schema import LoginRequest, LoginResponse
 from ..database import get_db
 
@@ -20,7 +19,7 @@ def login_user(login_request: LoginRequest, db: Session = Depends(get_db)):
             raise HTTPException(status_code=401, detail="Correo electrónico o contraseña incorrectos")
 
         # Registrar el inicio de sesión
-        new_login = register_login(user.id)
+        new_login = register_login(user.id, user.email)
         db.add(new_login)
         db.commit()
 

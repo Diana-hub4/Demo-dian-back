@@ -1,8 +1,8 @@
 # src/routes/invoicesReceipts_routes.py
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
-from ..models.invoicesReceipts import InvoicesReceipts
-from ..schemas.invoicesReceipts_schema import InvoicesReceiptsRequest, InvoicesReceiptsResponse
+from ..models.invoice import InvoicesReceipts
+from ..schemas.invoices_schema import InvoicesReceiptsRequest, InvoicesReceiptsResponse
 from ..database import SessionLocal
 
 router = APIRouter()

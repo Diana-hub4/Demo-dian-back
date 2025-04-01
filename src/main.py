@@ -3,7 +3,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from src.database import SessionSql, init_db, get_db
-from src.models.register import Register, RegisterJsonSchema
+from src.models.register import User, UserJsonSchema
 from src.routes import login_routes, forgot_password_routes, register_routes  
 from fastapi.middleware.cors import CORSMiddleware
 from .business_logic.forgot_password_logic import request_password_reset
@@ -27,8 +27,8 @@ app.include_router(forgot_password_routes.router)
 
 @app.get("/users/")
 def read_users(db: Session = Depends(get_db)):
-    register = db.query(Register).all()
-    schema = RegisterJsonSchema(many=True)
+    register = db.query(User).all()
+    schema = UserJsonSchema(many=True)
     return schema.dump(register)
 
 

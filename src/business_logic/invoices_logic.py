@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from src.models.invoicesReceipts import InvoicesReceipts  # Importa el modelo InvoicesReceipts
-from src.schemas.invoicesReceipts_schema import InvoicesReceiptsJsonSchema  # Importa el esquema para serialización
+from src.models.invoice import InvoicesReceipts  # Importa el modelo InvoicesReceipts
+from src.schemas.invoices_schema import InvoicesReceiptsJsonSchema  # Importa el esquema para serialización
 from typing import Optional, Dict, Any
 
 class InvoicesReceiptsLogic:

@@ -5,7 +5,7 @@ from typing import Optional
 from datetime import datetime
 
 
-class RegisterJsonSchema(BaseModel):
+class UserJsonSchema(BaseModel):
     name: str
     last_name: str
     role: str
@@ -13,6 +13,7 @@ class RegisterJsonSchema(BaseModel):
     email: EmailStr
     permissions: str
     password: str  
+    status: str
 
     class Config:
         from_attributes = True  # Para compatibilidad con SQLAlchemy

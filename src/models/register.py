@@ -13,8 +13,8 @@ load_dotenv()
 # Palabra secreta para encriptar (puedes quemarla o traerla de .env)
 SECRET_KEY = os.getenv("SECRET_KEY", "Diana_Sar")  # Usa una palabra secreta por defecto si no hay .env
 
-class Register(Model, Base):
-    __tablename__ = 'register'
+class User(Model, Base):
+    __tablename__ = 'user'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String(255), nullable=False)  # Nombre del usuario
@@ -24,8 +24,9 @@ class Register(Model, Base):
     email = Column(String(255), unique=True, nullable=False)  # Correo electrónico único
     permissions = Column(Enum('develop', 'accountant', 'client', 'total'), nullable=False)  # Permisos del usuario
     password = Column(String(128), nullable=False)  # Contraseña encriptada
+    status= Column(Enum('activo','inactivo','pendiente'),nullable=False) # Estado del usuario.
 
-    def __init__(self, name, last_name, role, identification_number, email, permissions, password):
+    def __init__(self, name, last_name, role, identification_number, email, permissions, password, status):
         Model.__init__(self)
         self.name = name
         self.last_name = last_name
@@ -34,6 +35,7 @@ class Register(Model, Base):
         self.email = email
         self.permissions = permissions
         self.set_password(password)  # Encripta la contraseña al crear el usuario
+        self.status = status
 
     def set_password(self, password):
         """Encripta la contraseña y la almacena en el campo password_hash."""
@@ -44,7 +46,7 @@ class Register(Model, Base):
         return check_password_hash(self.password, password)
 
 # Esquema para serializar/deserializar la tabla Register
-class RegisterJsonSchema(Schema):
+class UserJsonSchema(Schema):
     id = fields.Str()
     name = fields.Str()
     last_name = fields.Str()
@@ -52,28 +54,30 @@ class RegisterJsonSchema(Schema):
     identification_number = fields.Str()
     email = fields.Str()
     permissions = fields.Str()
-    password = fields.Str(load_only=True)  # Solo para recibir datos, no se incluye en la salida
+    password = fields.Str(load_only=True)
+    status = fields.Str()  # Solo para recibir datos, no se incluye en la salida
 
 # Función para registrar un nuevo usuario
-def register_user(name, last_name, role, identification_number, email, permissions, password):
+def register_user(name, last_name, role, identification_number, email, permissions, password,status):
     """
     Registra un nuevo usuario en la tabla register.
     Retorna el objeto Register si el registro es exitoso.
     """
     # Verifica si el correo electrónico ya está registrado
-    existing_user = Register.query.filter_by(email=email).first()
+    existing_user = User.query.filter_by(email=email).first()
     if existing_user:
         raise ValueError("El correo electrónico ya está registrado.")
 
     # Crea un nuevo registro
-    new_user = Register(
+    new_user = User(
         name=name,
         last_name=last_name,
         role=role,
         identification_number=identification_number,
         email=email,
         permissions=permissions,
-        password=password
+        password=password,
+        status=status
     )
     return new_user
 
