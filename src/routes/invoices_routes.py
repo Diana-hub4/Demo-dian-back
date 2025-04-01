@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from ..models.invoice import InvoicesReceipts
-from ..schemas.invoices_schema import InvoicesReceiptsRequest, InvoicesReceiptsResponse
+from ..schemas.invoices_schema import InvoiceRequest, InvoiceResponse
 from ..database import SessionLocal
 
 router = APIRouter()
@@ -16,8 +16,8 @@ def get_db():
         db.close()
 
 # Endpoint para crear una nueva factura/recibo
-@router.post("/invoices-receipts", response_model=InvoicesReceiptsResponse)
-async def create_invoice_receipt(invoice: InvoicesReceiptsRequest, db: SessionLocal = Depends(get_db)):
+@router.post("/invoices-receipts", response_model=InvoiceResponse)
+async def create_invoice_receipt(invoice: InvoiceRequest, db: SessionLocal = Depends(get_db)):
     try:
         # Crear una nueva factura/recibo
         new_invoice = InvoicesReceipts(
@@ -40,7 +40,7 @@ async def create_invoice_receipt(invoice: InvoicesReceiptsRequest, db: SessionLo
         raise HTTPException(status_code=500, detail=str(e))
 
 # Endpoint para obtener todas las facturas/recibos
-@router.get("/invoices-receipts", response_model=List[InvoicesReceiptsResponse])
+@router.get("/invoices-receipts", response_model=List[InvoiceResponse])
 async def get_all_invoices_receipts(db: SessionLocal = Depends(get_db)):
     try:
         invoices_receipts = db.query(InvoicesReceipts).all()
@@ -49,7 +49,7 @@ async def get_all_invoices_receipts(db: SessionLocal = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Endpoint para obtener una factura/recibo por ID
-@router.get("/invoices-receipts/{invoice_id}", response_model=InvoicesReceiptsResponse)
+@router.get("/invoices-receipts/{invoice_id}", response_model=InvoiceResponse)
 async def get_invoice_receipt_by_id(invoice_id: str, db: SessionLocal = Depends(get_db)):
     try:
         invoice_receipt = db.query(InvoicesReceipts).filter(InvoicesReceipts.id == invoice_id).first()
@@ -60,8 +60,8 @@ async def get_invoice_receipt_by_id(invoice_id: str, db: SessionLocal = Depends(
         raise HTTPException(status_code=500, detail=str(e))
 
 # Endpoint para actualizar una factura/recibo
-@router.put("/invoices-receipts/{invoice_id}", response_model=InvoicesReceiptsResponse)
-async def update_invoice_receipt(invoice_id: str, invoice: InvoicesReceiptsRequest, db: SessionLocal = Depends(get_db)):
+@router.put("/invoices-receipts/{invoice_id}", response_model=InvoiceResponse)
+async def update_invoice_receipt(invoice_id: str, invoice: InvoiceRequest, db: SessionLocal = Depends(get_db)):
     try:
         existing_invoice = db.query(InvoicesReceipts).filter(InvoicesReceipts.id == invoice_id).first()
         if not existing_invoice:

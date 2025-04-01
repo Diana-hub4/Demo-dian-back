@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 class ForgotPasswordRequest(BaseModel):
-    email: str
+    email: EmailStr
 
 class ResetPasswordRequest(BaseModel):
     token: str
