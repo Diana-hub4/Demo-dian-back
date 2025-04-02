@@ -1,6 +1,9 @@
 # src/main.py
-
+from http.client import HTTPException
+import os
 from fastapi import FastAPI, Depends
+from fastapi.staticfiles import StaticFiles 
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from src.database import SessionSql, init_db, get_db
 from src.models.register import User, UserJsonSchema
@@ -11,6 +14,9 @@ from .schemas.forgot_password_schemas import ForgotPasswordRequest
 
 
 app = FastAPI()
+
+# Configuración para la ruta exacta del PDF
+PDF_PATH = r"C:\Users\DIACA\PROJECTS\ACCOUNTING_SYSTEM\demo-dian\public\assets\Guía Completa del Sistema de Contabilidad DIAN-Colombia.pdf"
 
 # Inicializar base de datos al inicio
 @app.on_event("startup")
@@ -39,3 +45,19 @@ app.add_middleware(
     allow_methods=["*"],  # Permite todos los métodos HTTP (GET, POST, OPTIONS, etc.)
     allow_headers=["*"],  # Permite todos los headers
 )
+
+# Montar directorio de archivos estáticos
+@app.get("/descargar-guia")
+async def descargar_guia():
+    # Verifica que el archivo exista
+    if not os.path.exists(PDF_PATH):
+        raise HTTPException(
+            status_code=404,
+            detail="El archivo de la guía no se encuentra disponible temporalmente"
+        )
+    
+    return FileResponse(
+        path=PDF_PATH,
+        filename="Guia_Contable_DIAN.pdf",  # Nombre amigable para el usuario
+        media_type="application/pdf"
+    )

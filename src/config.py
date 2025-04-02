@@ -6,6 +6,23 @@ from dotenv import load_dotenv
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
+
+class Settings:
+    def __init__(self):
+        # Configuración de SendGrid
+        self.SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+        self.EMAIL_FROM = os.getenv("EMAIL_FROM") 
+        self.SENDGRID_TEMPLATE_ID = os.getenv("SENDGRID_TEMPLATE_ID")
+        self.FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:4200")
+
+        # Configuración de autenticación
+        self.ACCESS_TOKEN_EXPIRE_MINUTES = 30
+        self.SECRET_KEY = os.getenv("SECRET_KEY", "secret-key-default")
+        self.ALGORITHM = "HS256"
+
+        # Validación de configuraciones esenciales
+        if None in [self.SENDGRID_API_KEY, self.EMAIL_FROM, self.SENDGRID_TEMPLATE_ID]:
+            raise ValueError("Faltan configuraciones esenciales en .env")
 class Config:
     # Configuración de Flask-Mail
     MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # Servidor SMTP
@@ -14,15 +31,6 @@ class Config:
     MAIL_USERNAME = os.getenv('MAIL_USERNAME', 'tu_correo@gmail.com')  # Correo electrónico
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', 'tu_contraseña')  # Contraseña del correo
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', 'tu_correo@gmail.com')  # Correo remitente
-    SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-    env_file = ".env"
-
-class Settings:
-    SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY")
-    EMAIL_FROM: str = "camilasarmientombl@gmail.com"
-    FRONTEND_URL: str = "http://localhost:4200"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    SECRET_KEY: str = os.getenv("SECRET_KEY")
-    ALGORITHM: str = "HS256"
 
 settings = Settings()
+config = Config() 
