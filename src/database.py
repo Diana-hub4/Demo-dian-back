@@ -2,21 +2,27 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.models import Base  # Importar Base desde base.py
+from sqlalchemy.ext.declarative import declarative_base
 
-# Configuración de DB (ajusta tu string de conexión)
 DATABASE_URL = "sqlite:///./HANA.db"
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}  # Solo necesario para SQLite
+)
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-SessionSql = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
-# Crear tablas
-def init_db():
-    Base.metadata.create_all(bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+SessionSql = SessionLocal
 
 def get_db():
-    db = SessionSql()
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+def init_db():
+    from src.models.pqrsf import PQRSF  
+    Base.metadata.create_all(bind=engine)

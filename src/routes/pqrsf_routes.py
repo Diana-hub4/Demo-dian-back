@@ -1,38 +1,66 @@
 # src/routes/pqrsf_routes.py
-from fastapi import APIRouter, File, UploadFile, Form, HTTPException
+import uuid 
+from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
 from typing import List
 from ..models.pqrsf import PQRSF
 from ..schemas.pqrsf_schema import PQRSFRequest, PQRSFResponse
-from ..database import SessionLocal
+from ..database import SessionLocal, get_db
+from sqlalchemy.orm import Session
+from src.models.pqrsf import PQRSF  # Asegúrate que este modelo existe
+import os
+import shutil
+from datetime import datetime
+from typing import List
 
-router = APIRouter()
+router = APIRouter(prefix="/pqrsf", tags=["PQRSF"])
 
-@router.post("/pqrsf", response_model=PQRSFResponse)
-async def submit_pqrsf(
-    pqrsf_type: str = Form(...),
-    message: str = Form(...),
-    files: List[UploadFile] = File(None)
+UPLOAD_DIR = "uploads/pqrsf"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+@router.post("/")
+async def crear_pqrsf(
+    tipo: str = Form(...),
+    mensaje: str = Form(...),
+    archivos: List[UploadFile] = File([]),  # Lista de archivos (opcional)
+    db: Session = Depends(get_db)
 ):
-    db = SessionLocal()
     try:
-        # Crear una nueva PQRSF
-        new_pqrsf = PQRSF(pqrsf_type=pqrsf_type, message=message)
-        db.add(new_pqrsf)
+        nombres_archivos = []
+        for archivo in archivos:
+            if not archivo.filename.lower().endswith(('.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png')):
+                continue  # O devuelve un error 400
+            
+            file_path = os.path.join(UPLOAD_DIR, f"{uuid.uuid4()}_{archivo.filename}")
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(archivo.file, buffer)
+            nombres_archivos.append(file_path)
+
+        nueva_pqrsf = PQRSF(
+            tipo=tipo,
+            mensaje=mensaje,
+            archivos=nombres_archivos,  # Asegúrate de que sea JSON-compatible
+            fecha=datetime.utcnow(),
+            estado="recibido"
+        )
+        db.add(nueva_pqrsf)
         db.commit()
-        db.refresh(new_pqrsf)
+        db.refresh(nueva_pqrsf)
 
-        # Procesar archivos adjuntos (si los hay)
-        if files:
-            for file in files:
-                file_content = await file.read()
-                # Aquí puedes guardar el archivo en el servidor o procesarlo
-                print(f"Archivo recibido: {file.filename}")
-
-        return new_pqrsf
-
+        return {
+            "status": "success",
+            "message": "PQRSF registrada correctamente",
+            "data": {
+                "id": nueva_pqrsf.id,
+                "tipo": nueva_pqrsf.tipo,
+                "fecha": nueva_pqrsf.fecha
+            }
+        }
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al procesar PQRSF: {str(e)}"
+        )
 
     finally:
         db.close()

@@ -6,17 +6,24 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from src.database import SessionSql, init_db, get_db
+from src.models import pqrsf
 from src.models.register import User, UserJsonSchema
-from src.routes import login_routes, forgot_password_routes, register_routes  
+from src.routes import login_routes, forgot_password_routes, pqrsf_routes, register_routes  
 from fastapi.middleware.cors import CORSMiddleware
 from .business_logic.forgot_password_logic import request_password_reset
 from .schemas.forgot_password_schemas import ForgotPasswordRequest
 
+init_db ()
 
 app = FastAPI()
+app.include_router(pqrsf_routes.router)
 
 # Configuración para la ruta exacta del PDF
 PDF_PATH = r"C:\Users\DIACA\PROJECTS\ACCOUNTING_SYSTEM\demo-dian\public\assets\Guía Completa del Sistema de Contabilidad DIAN-Colombia.pdf"
+
+@app.get("/")
+def read_root():
+    return {"message": "Sistema DIAN - Backend"}
 
 # Inicializar base de datos al inicio
 @app.on_event("startup")
@@ -61,3 +68,11 @@ async def descargar_guia():
         filename="Guia_Contable_DIAN.pdf",  # Nombre amigable para el usuario
         media_type="application/pdf"
     )
+
+# Configura CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],  # Ajusta según tu frontend
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

@@ -10,3 +10,6 @@ from .dianVerification import DianVerification
 from .model import Base
 from .register import User, UserJsonSchema
 from ..schemas.invoices_schema import InvoicesJsonSchema 
+from .pqrsf import PQRSF  # Exporta el modelo
+
+__all__ = ['PQRSF']
