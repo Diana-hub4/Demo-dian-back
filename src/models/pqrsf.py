@@ -13,8 +13,11 @@ class PQRSF(Base):
     __tablename__ = "pqrsf"
     
     id = Column(Integer, primary_key=True, index=True)
+    numero_radicado = Column(String(36), unique=True, index=True)
     tipo = Column(String) 
     mensaje = Column(String)
     archivos = Column(JSON)  # Lista de nombres de archivos
     fecha = Column(DateTime, default=datetime.utcnow)
     estado = Column(String, default="pendiente")
+    respuesta = Column(String, nullable=True) 
+    email_usuario = Column(String)

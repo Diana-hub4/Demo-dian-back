@@ -3,6 +3,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from src.config import DATABASE_URL
+
+SessionSql = sessionmaker(...)
 
 DATABASE_URL = "sqlite:///./HANA.db"
 engine = create_engine(
@@ -11,10 +14,8 @@ engine = create_engine(
 )
 
 Base = declarative_base()
-
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-SessionSql = SessionLocal
 
 def get_db():
     db = SessionLocal()

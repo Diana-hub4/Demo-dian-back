@@ -1,6 +1,7 @@
 # src/routes/pqrsf_routes.py
 import uuid 
-from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends
+from fastapi import APIRouter, File, UploadFile, Form, HTTPException, Depends, BackgroundTasks
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from typing import List
 from ..models.pqrsf import PQRSF
 from ..schemas.pqrsf_schema import PQRSFRequest, PQRSFResponse
@@ -11,14 +12,28 @@ import os
 import shutil
 from datetime import datetime
 from typing import List
+from pydantic import EmailStr
 
 router = APIRouter(prefix="/pqrsf", tags=["PQRSF"])
 
 UPLOAD_DIR = "uploads/pqrsf"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+conf = ConnectionConfig(
+    MAIL_USERNAME="tu_correo@gmail.com",
+    MAIL_PASSWORD="tu_contraseña",
+    MAIL_FROM="tu_correo@gmail.com",
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_STARTTLS=True,  # Nuevo parámetro requerido
+    MAIL_SSL_TLS=False,  # Nuevo parámetro requerido
+    USE_CREDENTIALS=True,
+    VALIDATE_CERTS=True
+)
+
 @router.post("/")
 async def crear_pqrsf(
+    background_tasks: BackgroundTasks,
     tipo: str = Form(...),
     mensaje: str = Form(...),
     archivos: List[UploadFile] = File([]),  # Lista de archivos (opcional)

@@ -1,5 +1,6 @@
 # src/models/__init__.py
 
+# Exporta solo modelos y esquemas
 from .clients import Client, ClientJsonSchema
 from .taxes import Tax, TaxJsonSchema
 from .paymentsTransfers import PaymentsTransfers, PaymentsTransfersJsonSchema
@@ -9,7 +10,18 @@ from .login import Login
 from .dianVerification import DianVerification
 from .model import Base
 from .register import User, UserJsonSchema
-from ..schemas.invoices_schema import InvoicesJsonSchema 
-from .pqrsf import PQRSF  # Exporta el modelo
+from .pqrsf import PQRSF
 
-__all__ = ['PQRSF']
+# Lista todos los modelos y esquemas para exportar
+__all__ = [
+    'Client', 'ClientJsonSchema',
+    'Tax', 'TaxJsonSchema',
+    'PaymentsTransfers', 'PaymentsTransfersJsonSchema',
+    'Invoice',
+    'Generator',
+    'Login',
+    'DianVerification',
+    'Base',
+    'User', 'UserJsonSchema',
+    'PQRSF'
+]

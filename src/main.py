@@ -5,58 +5,49 @@ from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles 
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from src.database import SessionSql, init_db, get_db
+from .database import SessionSql, init_db, get_db
 from src.models import pqrsf
 from src.models.register import User, UserJsonSchema
 from src.routes import login_routes, forgot_password_routes, pqrsf_routes, register_routes  
 from fastapi.middleware.cors import CORSMiddleware
 from .business_logic.forgot_password_logic import request_password_reset
 from .schemas.forgot_password_schemas import ForgotPasswordRequest
-
-init_db ()
+from .config import DATABASE_URL
 
 app = FastAPI()
-app.include_router(pqrsf_routes.router)
 
-# Configuración para la ruta exacta del PDF
-PDF_PATH = r"C:\Users\DIACA\PROJECTS\ACCOUNTING_SYSTEM\demo-dian\public\assets\Guía Completa del Sistema de Contabilidad DIAN-Colombia.pdf"
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.on_event("startup")
+def startup():
+    from src.database import init_db
+    print("Creando base de datos...")
+    init_db()
+    print("Base de datos lista.")
+
+from src.routes import pqrsf_routes, register_routes, login_routes, forgot_password_routes
+
+app.include_router(pqrsf_routes.router)
+app.include_router(register_routes.router)
+app.include_router(login_routes.router)
+app.include_router(forgot_password_routes.router)
+
+init_db ()
 
 @app.get("/")
 def read_root():
     return {"message": "Sistema DIAN - Backend"}
 
-# Inicializar base de datos al inicio
-@app.on_event("startup")
-def startup():
-    print("Creando base de datos...")
-    init_db()
-    print("Base de datos lista.")
+PDF_PATH = r"C:\Users\DIACA\PROJECTS\ACCOUNTING_SYSTEM\demo-dian\public\assets\Guía Completa del Sistema de Contabilidad DIAN-Colombia.pdf"
 
-
-# Endpoint de prueba para insertar y obtener usuarios
-app.include_router(register_routes.router)
-app.include_router(login_routes.router)
-app.include_router(forgot_password_routes.router)
-
-@app.get("/users/")
-def read_users(db: Session = Depends(get_db)):
-    register = db.query(User).all()
-    schema = UserJsonSchema(many=True)
-    return schema.dump(register)
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Define el origen de las peticiones permitidas
-    allow_credentials=True,
-    allow_methods=["*"],  # Permite todos los métodos HTTP (GET, POST, OPTIONS, etc.)
-    allow_headers=["*"],  # Permite todos los headers
-)
-
-# Montar directorio de archivos estáticos
 @app.get("/descargar-guia")
 async def descargar_guia():
-    # Verifica que el archivo exista
     if not os.path.exists(PDF_PATH):
         raise HTTPException(
             status_code=404,
@@ -65,14 +56,6 @@ async def descargar_guia():
     
     return FileResponse(
         path=PDF_PATH,
-        filename="Guia_Contable_DIAN.pdf",  # Nombre amigable para el usuario
+        filename="Guia_Contable_DIAN.pdf",
         media_type="application/pdf"
     )
-
-# Configura CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:4200"],  # Ajusta según tu frontend
-    allow_methods=["*"],
-    allow_headers=["*"],
-)

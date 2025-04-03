@@ -1,8 +1,44 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Enum, DateTime, ForeignKey, Float
+from sqlalchemy import Column, String, Enum, DateTime, ForeignKey, Float, Numeric, Boolean
 from .model import Model, Base
 from marshmallow import Schema, fields
+from sqlalchemy.dialects.postgresql import ARRAY
+from enum import Enum as PyEnum
+class TipoContrato(PyEnum):
+    OBRA_LABOR = "obra_labor"
+    PRESTACION_SERVICIOS = "prestacion_servicios"
+    FIJO = "fijo"
+    INDEFINIDO = "indefinido"
+    APRENDIZ = "aprendiz"
+
+class Nomina(Model, Base):
+    __tablename__ = 'nomina'
+    
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id_user = Column(String(36), ForeignKey('user.id'), nullable=False)
+    contract_type = Column(Enum(TipoContrato), nullable=False)
+    period = Column(String(7), nullable=False)  # YYYY-MM
+    employee_id = Column(String(20), nullable=False)  # Cédula del empleado
+    employee_name = Column(String(255), nullable=False)
+    base_salary = Column(Numeric(12, 2), nullable=False)
+    transport_allowance = Column(Numeric(12, 2), default=0.0)
+    days_worked = Column(Numeric(5, 2), nullable=False)
+    night_hours = Column(Numeric(5, 2), default=0.0)
+    extra_day_hours = Column(Numeric(5, 2), default=0.0)
+    extra_night_hours = Column(Numeric(5, 2), default=0.0)
+    sunday_hours = Column(Numeric(5, 2), default=0.0)
+    holiday_hours = Column(Numeric(5, 2), default=0.0)
+    health_contribution = Column(Numeric(12, 2), nullable=False)
+    pension_contribution = Column(Numeric(12, 2), nullable=False)
+    solidarity_pension_fund = Column(Numeric(12, 2), default=0.0)
+    deductions = Column(Numeric(12, 2), default=0.0)
+    other_concepts = Column(ARRAY(String))  # Conceptos adicionales
+    total_gross = Column(Numeric(12, 2), nullable=False)
+    total_net = Column(Numeric(12, 2), nullable=False)
+    is_paid = Column(Boolean, default=False)
+    payment_date = Column(DateTime, nullable=True)
+    pdf_url = Column(String, nullable=True)
 
 class Nomina(Model, Base):
     __tablename__ = 'nomina'

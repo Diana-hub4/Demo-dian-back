@@ -1,9 +1,10 @@
 import uuid
 from datetime import datetime, timezone
-from fastapi import HTTPException
 from sqlalchemy import Column, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-
+from sqlalchemy.orm import relationship, Session
+from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
+from fastapi.responses import JSONResponse
 from src.schemas.register_schema import UserJsonSchema
 from .model import Model, Base
 from marshmallow import Schema, fields
@@ -39,20 +40,16 @@ class LoginJsonSchema(Schema):
     login_date = fields.DateTime()
 
 # Función para autenticar al usuario
-def authenticate_user(email, password,db):
-    """
-    Autentica a un usuario verificando su correo electrónico y contraseña.
-    Retorna el objeto User si las credenciales son válidas, de lo contrario retorna None.
-    """
-    try: 
-        user = db.query(User).filter_by(email=email).first() 
+def authenticate_user(db: Session, email: str, password: str):
+    try:
+        user = db.query(User).filter(User.email == email).first()
+        if not user or not user.verify_password(password):
+            return None
+        return user
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-    if user and user.check_password(password):  # Verifica la contraseña
-        return user
-    return None
-
+        raise e
+    
 # Función para registrar un nuevo inicio de sesión
 def register_login(user_id, user_email):
     """
