@@ -1,35 +1,43 @@
 import os
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings 
+from pydantic import Field
 
-# Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./sql_app.db")
+class Settings(BaseSettings):
+    # Configuración de base de datos
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./sql_app.db")
+    
+    # Configuración de autenticación
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "secret-key-default")
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
+        default=30,
+        alias="ACCESS_TOKEN_EXPIRE_MINUTES"
+    )
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = Field(
+        default=60 * 24 * 7,  # 7 días
+        alias="REFRESH_TOKEN_EXPIRE_MINUTES"
+    )
 
-class Settings:
-    def __init__(self):
-        # Configuración de SendGrid
-        self.SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-        self.EMAIL_FROM = os.getenv("EMAIL_FROM") 
-        self.SENDGRID_TEMPLATE_ID = os.getenv("SENDGRID_TEMPLATE_ID")
-        self.FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:4200")
+    # Configuración de email
+    SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "")
+    EMAIL_FROM: str = os.getenv("EMAIL_FROM", "")
+    SENDGRID_TEMPLATE_ID: str = os.getenv("SENDGRID_TEMPLATE_ID", "")
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:4200")
+    
+    # Configuración SMTP
+    MAIL_SERVER: str = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+    MAIL_PORT: int = int(os.getenv('MAIL_PORT', '587'))
+    MAIL_USE_TLS: bool = os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
+    MAIL_USERNAME: str = os.getenv('MAIL_USERNAME', '')
+    MAIL_PASSWORD: str = os.getenv('MAIL_PASSWORD', '')
+    MAIL_DEFAULT_SENDER: str = os.getenv('MAIL_DEFAULT_SENDER', '')
 
-        # Configuración de autenticación
-        self.ACCESS_TOKEN_EXPIRE_MINUTES = 30
-        self.SECRET_KEY = os.getenv("SECRET_KEY", "secret-key-default")
-        self.ALGORITHM = "HS256"
-
-        # Validación de configuraciones esenciales
-        if None in [self.SENDGRID_API_KEY, self.EMAIL_FROM, self.SENDGRID_TEMPLATE_ID]:
-            raise ValueError("Faltan configuraciones esenciales en .env")
-class Config:
-    # Configuración de Flask-Mail
-    MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # Servidor SMTP
-    MAIL_PORT = int(os.getenv('MAIL_PORT', 587))  # Puerto SMTP
-    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']  # Usar TLS
-    MAIL_USERNAME = os.getenv('MAIL_USERNAME', 'tu_correo@gmail.com')  # Correo electrónico
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', 'tu_contraseña')  # Contraseña del correo
-    MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', 'tu_correo@gmail.com')  # Correo remitente
+    class Config:
+        env_file = ".env"
+        extra = "ignore"  # Permite ignorar variables extra no definidas
+        allow_population_by_field_name = True  # Permite usar alias
 
 settings = Settings()
-config = Config() 
