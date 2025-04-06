@@ -46,7 +46,7 @@ class User(Model, Base):
         return check_password_hash(self.password, password)
 
 # Esquema para serializar/deserializar la tabla Register
-class UserJsonSchema(Schema):
+class UserJsonSchema(Model, Base):
     id = fields.Str()
     name = fields.Str()
     last_name = fields.Str()
