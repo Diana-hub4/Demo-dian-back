@@ -11,13 +11,15 @@ def create_user(register: UserJsonSchema, db: Session = Depends(get_db)):
     print("📩 Body recibido:", register.dict())  
     # Verificar si el correo electrónico ya está registrado
     existing_user_email = db.query(User).filter(User.email == register.email).first()
-    existing_user_identification_number = db.query(User).filter(User.email == register.email).first()
-    if existing_user_email or existing_user_identification_number:
+    existing_user_id = db.query(User).filter(
+        User.identification_number == register.identification_number
+    ).first()
+    if existing_user_email or existing_user_id:
         raise HTTPException(status_code=400, detail="El Usuario ya se encuentra registrado.")
 
     # Crear un nuevo usuario
     db_user = User(
-        name=register.name,
+        first_name=register.first_name,
         last_name=register.last_name,
         role=register.role,  # Ahora el rol se recibe desde el esquema
         identification_number=register.identification_number,

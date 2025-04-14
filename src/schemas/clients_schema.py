@@ -57,3 +57,18 @@ class ClientResponse(BaseModel):
     regime_type: str = Field(..., description="Tipo de régimen (Simplificado, Común, Especial)")
     status: str = Field(..., description="Estado del cliente (activo o inactivo)")
     created_at: datetime = Field(..., description="Fecha de creación del cliente")
+
+class ClientCreateSchema(BaseModel):
+    id_user: str
+    name: str
+    person_type: str
+    tax_id: str
+    document_type: str
+    identification_number: str
+    business_reason: str
+    email: str
+    contact_number: str
+    address: str
+    city: str
+    regime_type: str
+    status: Optional[str] = 'active'

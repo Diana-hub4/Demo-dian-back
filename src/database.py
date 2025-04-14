@@ -1,16 +1,20 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from src.config import settings
 
-# Configuración de la base de datos
+SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"  
+
 engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False}
 )
-
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+
+def init_db():
+    from src.models import login, register  # importa tus modelos aquí
+    Base.metadata.create_all(bind=engine)
 
 def get_db():
     db = SessionLocal()
@@ -18,10 +22,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-def init_db():
-    # Importa todos los modelos aquí para que SQLAlchemy los reconozca
-    from src.models.register import User
-    from src.models.pqrsf import PQRSF
-    
-    Base.metadata.create_all(bind=engine)

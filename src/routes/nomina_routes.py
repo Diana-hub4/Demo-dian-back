@@ -62,7 +62,7 @@ async def get_all_nominas(db: SessionLocal = Depends(get_db)):
 # Endpoint para obtener una nómina por ID
 @router.post("/", response_model=NominaResponse)
 async def create_nomina(
-    nomina_data: NominaCreate, 
+    nomina_data: Union[NominaRequest, NominaCreate],
     db: Session = Depends(get_db)
 ):
     try:

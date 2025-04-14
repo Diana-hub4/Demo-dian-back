@@ -4,6 +4,8 @@ from typing import List
 from ..models.clients import Client, create_client
 from ..schemas.clients_schema import ClientRequest, ClientResponse
 from ..database import SessionLocal
+from sqlalchemy.orm import Session
+from ..database import get_db
 
 router = APIRouter()
 

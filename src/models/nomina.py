@@ -15,75 +15,82 @@ class TipoContrato(PyEnum):
 class Nomina(Model, Base):
     __tablename__ = 'nomina'
     
+    # Identificación y relación
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     id_user = Column(String(36), ForeignKey('user.id'), nullable=False)
-    contract_type = Column(Enum(TipoContrato), nullable=False)
-    period = Column(String(7), nullable=False)  # YYYY-MM
+    
+    #Información del empleado
     employee_id = Column(String(20), nullable=False)  # Cédula del empleado
     employee_name = Column(String(255), nullable=False)
-    base_salary = Column(Numeric(12, 2), nullable=False)
-    transport_allowance = Column(Numeric(12, 2), default=0.0)
+    email = Column(String(255), nullable=False)
+    cargo = Column(String)  # Nuevo campo: cargo del empleado
+
+    # Información del contrato y periodo
+    contract_type = Column(Enum(TipoContrato), nullable=False)
+    period = Column(String(7), nullable=False)  # YYYY-MM
+    
+    # Salarios e ingresos
+    salario_base = Column(Numeric(12, 2), nullable=False)  # base_salary renombrado
+    horas_extras = Column(Numeric(12, 2), default=0.0)  # Nuevo campo
+    transporte = Column(Numeric(12, 2), default=0.0)  # transport_allowance renombrado
+    vacaciones = Column(Numeric(12, 2), default=0.0)  # Nuevo campo
+    total_ingresos = Column(Numeric(12, 2), default=0.0)  # Nuevo campo
+    
+    # Tiempo trabajado
     days_worked = Column(Numeric(5, 2), nullable=False)
     night_hours = Column(Numeric(5, 2), default=0.0)
     extra_day_hours = Column(Numeric(5, 2), default=0.0)
     extra_night_hours = Column(Numeric(5, 2), default=0.0)
     sunday_hours = Column(Numeric(5, 2), default=0.0)
     holiday_hours = Column(Numeric(5, 2), default=0.0)
+    retrasos = Column(Numeric(12, 2), default=0.0) 
+    
+    # Deducciones y aportes
     health_contribution = Column(Numeric(12, 2), nullable=False)
     pension_contribution = Column(Numeric(12, 2), nullable=False)
     solidarity_pension_fund = Column(Numeric(12, 2), default=0.0)
     deductions = Column(Numeric(12, 2), default=0.0)
+    total_deducciones = Column(Numeric(12, 2), default=0.0) 
+    
+    # Otros campos
     other_concepts = Column(ARRAY(String))  # Conceptos adicionales
-    total_gross = Column(Numeric(12, 2), nullable=False)
-    total_net = Column(Numeric(12, 2), nullable=False)
+    total_neto = Column(Numeric(12, 2), nullable=False)  # total_net renombrado
     is_paid = Column(Boolean, default=False)
     payment_date = Column(DateTime, nullable=True)
     pdf_url = Column(String, nullable=True)
 
-class Nomina(Model, Base):
-    __tablename__ = 'nomina'
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    id_user = Column(String(36), ForeignKey('user.id'), nullable=False)  # Relación con el usuario (contador)
-    contract_type = Column(Enum('obra_labor', 'prestacion_servicios', 'fijo', 'indefinido', 'aprendiz'), nullable=False)  # Tipo de contrato
-    period = Column(String(7), nullable=False)  # Periodo (mes y año, formato YYYY-MM)
-    employee_name = Column(String(255), nullable=False)  # Nombre del empleado
-    salary = Column(Float, nullable=False)  # Salario bruto
-    deductions = Column(Float, default=0.0)  # Deducciones (sanciones, descuentos, etc.)
-    email = Column(String(255), nullable=False)  # Correo electrónico del empleado
-    contributions = Column(Float, nullable=False)  # Aportes (salud, pensión, ARL, etc.)
-
-    def __init__(self, id_user, contract_type, period, employee_name, salary, deductions, email, contributions):
-        Model.__init__(self)
-        self.id_user = id_user
-        self.contract_type = contract_type
-        self.period = period
-        self.employee_name = employee_name
-        self.salary = salary
-        self.deductions = deductions
-        self.email = email
-        self.contributions = contributions
-
-# Esquema para serializar/deserializar la tabla Nomina
-class NominaJsonSchema(Schema):
-    id = fields.Str()
-    id_user = fields.Str()
-    contract_type = fields.Str()
-    period = fields.Str()
-    employee_name = fields.Str()
-    salary = fields.Float()
-    deductions = fields.Float()
-    email = fields.Str()
-    contributions = fields.Float()
-
-# Función para crear una nueva nómina
-def create_nomina(id_user, contract_type, period, employee_name, salary, deductions, email, contributions):
+def create_nomina(id_user, contract_type, period, employee_name, employee_id, email, 
+                 salario_base, days_worked, health_contribution, pension_contribution,
+                 **kwargs):
     """
     Crea una nueva nómina en la tabla nomina.
     Retorna el objeto Nomina si el registro es exitoso.
+    
+    Args:
+        id_user: ID del usuario que crea la nómina
+        contract_type: Tipo de contrato (enum TipoContrato)
+        period: Periodo en formato YYYY-MM
+        employee_name: Nombre del empleado
+        employee_id: Identificación del empleado
+        email: Email del empleado
+        salario_base: Salario base del empleado
+        days_worked: Días trabajados en el periodo
+        health_contribution: Aporte a salud
+        pension_contribution: Aporte a pensión
+        **kwargs: Otros campos opcionales de la nómina
+        
+    Returns:
+        Objeto Nomina creado
+        
+    Raises:
+        ValueError: Si ya existe una nómina para este empleado en el período
     """
     # Verifica si ya existe una nómina para el mismo empleado en el mismo período
-    existing_nomina = Nomina.query.filter((Nomina.employee_name == employee_name) & (Nomina.period == period)).first()
+    existing_nomina = Nomina.query.filter(
+        (Nomina.employee_id == employee_id) & 
+        (Nomina.period == period)
+    ).first()
+    
     if existing_nomina:
         raise ValueError("Ya existe una nómina para este empleado en el período especificado.")
 
@@ -93,9 +100,13 @@ def create_nomina(id_user, contract_type, period, employee_name, salary, deducti
         contract_type=contract_type,
         period=period,
         employee_name=employee_name,
-        salary=salary,
-        deductions=deductions,
+        employee_id=employee_id,
         email=email,
-        contributions=contributions
+        salario_base=salario_base,
+        days_worked=days_worked,
+        health_contribution=health_contribution,
+        pension_contribution=pension_contribution,
+        **kwargs
     )
+    
     return new_nomina

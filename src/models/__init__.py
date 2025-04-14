@@ -1,6 +1,5 @@
 # src/models/__init__.py
 
-# Exporta solo modelos y esquemas
 from .clients import Client, ClientJsonSchema
 from .taxes import Tax, TaxJsonSchema
 from .paymentsTransfers import PaymentsTransfers, PaymentsTransfersJsonSchema
@@ -9,10 +8,15 @@ from .generator import Generator
 from .login import Login
 from .dianVerification import DianVerification
 from .model import Base
-from .register import User, UserJsonSchema
+from .register import User
 from .pqrsf import PQRSF
+from src.schemas.register_schema import UserJsonSchema
+from typing import TYPE_CHECKING
 
-# Lista todos los modelos y esquemas para exportar
+if TYPE_CHECKING:
+    from .login import Login
+    from .register import User
+
 __all__ = [
     'Client', 'ClientJsonSchema',
     'Tax', 'TaxJsonSchema',

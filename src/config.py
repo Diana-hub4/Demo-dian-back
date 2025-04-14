@@ -38,6 +38,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         extra = "ignore"  # Permite ignorar variables extra no definidas
-        allow_population_by_field_name = True  # Permite usar alias
+        validate_by_name = True  # Permite usar alias
 
 settings = Settings()

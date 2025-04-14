@@ -1,24 +1,22 @@
 import uuid
 from datetime import datetime, timezone
+from sqlalchemy.orm import Session 
 from sqlalchemy import Column, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship, Session
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
-from fastapi.responses import JSONResponse
-from src.schemas.register_schema import UserJsonSchema
-from .model import Model, Base
+from sqlalchemy.orm import relationship
+from src.database import Base
+from src.models.base import Model
 from marshmallow import Schema, fields
 from src.models.register import User
-from werkzeug.security import generate_password_hash, check_password_hash  # type: ignore # Para manejar contraseñas seguras
 
-# Tabla para registrar los inicios de sesión (ya existente)
 class Login(Model, Base):
     __tablename__ = 'login'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    id_user = Column(String(36), ForeignKey('user.id'), nullable=False)
+    id_user = Column(String(36), ForeignKey('users.id'), nullable=False)
     email = Column(String(50),nullable=False)
     login_date = Column(DateTime)
+
+    user = relationship("User", back_populates="logins")
 
     def __init__(self, id_user, email, login_date):
         Model.__init__(self)
@@ -41,19 +39,20 @@ class LoginJsonSchema(Schema):
 
 # Función para autenticar al usuario
 def authenticate_user(db: Session, email: str, password: str):
-    try:
-        user = db.query(User).filter(User.email == email).first()
-        if not user or not user.verify_password(password):
-            return None
-        return user
-    except Exception as e:
-        db.rollback()
-        raise e
+    user = db.query(User).filter(User.email == email).first()
+    if not user or not user.verify_password(password):
+        return None
+    return user
     
 # Función para registrar un nuevo inicio de sesión
-def register_login(user_id, user_email):
-    """
-    Registra un nuevo inicio de sesión en la tabla login.
-    """
-    new_login = Login(id_user=user_id, email=user_email, login_date=datetime.now(timezone.utc))
+def register_login(db: Session, user_id: str, email: str, name: str = None, identification: str = None):
+    new_login = Login(
+        id_user=user_id,
+        email=email,
+        name=name,
+        identification=identification,
+        login_date=datetime.now(timezone.utc)
+    )
+    db.add(new_login)
+    db.commit()
     return new_login

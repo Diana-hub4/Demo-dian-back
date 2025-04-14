@@ -51,3 +51,16 @@ class NominaResponse(NominaCreate):
     payment_date: Optional[date]
     pdf_url: Optional[str]
     created_at: datetime
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id_user": "uuid-del-usuario",
+                "employee_id": "123456789",
+                "employee_name": "Juan Pérez",
+                "contract_type": "indefinido",
+                "period": "2023-10",
+                "salario_base": 2500000,
+                # ... etc ...
+            }
+        }
