@@ -1,14 +1,16 @@
+## src\models\taxes.py
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, Enum, DateTime, ForeignKey
-from .model import Model, Base
+from .model import Model
 from marshmallow import Schema, fields
+from src.database import Base
 
-class Tax(Model, Base):
+class Taxes(Model, Base):
     __tablename__ = 'taxes'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    id_invoice_receipt = Column(String(36), ForeignKey('invoices_receipts.id'), nullable=False)
+    id_invoice_receipt = Column(String(36), ForeignKey('invoices.id'), nullable=False)
     tax_advance = Column(String(10))
     contributions = Column(String(10))
     withholding_tax_1 = Column(String(10))

@@ -1,14 +1,16 @@
+## src\models\suppliers.py
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, Enum, DateTime, ForeignKey
-from .model import Model, Base
+from .model import Model
 from marshmallow import Schema, fields
+from src.database import Base
 
 class Supplier(Model, Base):
     __tablename__ = 'suppliers'
     
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    id_user = Column(String(36), ForeignKey('user.id'), nullable=False)  # Relación con el usuario (contador)
+    id_user = Column(String(36), ForeignKey('users.id'), nullable=False)  # Relación con el usuario (contador)
     name = Column(String(255), nullable=False)  # Nombre del proveedor
     person_type = Column(Enum('Natural', 'Legal', 'Company'), nullable=False)  # Tipo de persona (Natural, Jurídica, Empresa)
     tax_id = Column(String(255), nullable=False)  # NIT o Cédula con dígito de verificación

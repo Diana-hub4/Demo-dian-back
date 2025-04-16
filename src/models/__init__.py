@@ -1,7 +1,7 @@
 # src/models/__init__.py
 
 from .clients import Client, ClientJsonSchema
-from .taxes import Tax, TaxJsonSchema
+from .taxes import Taxes, TaxJsonSchema
 from .paymentsTransfers import PaymentsTransfers, PaymentsTransfersJsonSchema
 from .invoice import Invoice
 from .generator import Generator

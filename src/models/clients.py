@@ -8,7 +8,7 @@ class Client(Model, Base):
     __tablename__ = 'clients'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    id_user = Column(String(36), ForeignKey('user.id'), nullable=False)  # Relación con el usuario (contador)
+    id_user = Column(String(36), ForeignKey('users.id'), nullable=False)  # Relación con el usuario (contador)
     name = Column(String(255), nullable=False)  # Nombre del cliente
     person_type = Column(Enum('Natural', 'Legal', 'Company'), nullable=False)  # Tipo de persona (Natural, Jurídica, Empresa)
     tax_id = Column(String(255), nullable=False)  # NIT o Cédula con dígito de verificación

@@ -1,6 +1,7 @@
+## src\models\nomina.py
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Enum, DateTime, ForeignKey, Float, Numeric, Boolean
+from sqlalchemy import Column, String, Enum, DateTime, ForeignKey, Float, Numeric, Boolean, JSON
 from .model import Model, Base
 from marshmallow import Schema, fields
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -17,7 +18,7 @@ class Nomina(Model, Base):
     
     # Identificación y relación
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    id_user = Column(String(36), ForeignKey('user.id'), nullable=False)
+    id_user = Column(String(36), ForeignKey('users.id'), nullable=False)
     
     #Información del empleado
     employee_id = Column(String(20), nullable=False)  # Cédula del empleado
@@ -53,7 +54,7 @@ class Nomina(Model, Base):
     total_deducciones = Column(Numeric(12, 2), default=0.0) 
     
     # Otros campos
-    other_concepts = Column(ARRAY(String))  # Conceptos adicionales
+    other_concepts = Column(JSON)  # Conceptos adicionales
     total_neto = Column(Numeric(12, 2), nullable=False)  # total_net renombrado
     is_paid = Column(Boolean, default=False)
     payment_date = Column(DateTime, nullable=True)

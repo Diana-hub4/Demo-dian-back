@@ -1,7 +1,8 @@
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, Enum, DateTime, ForeignKey
-from .model import Model, Base
+from .model import Model
+from src.database import Base
 from marshmallow import Schema, fields
 
 class PaymentsTransfers(Model, Base):

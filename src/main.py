@@ -1,3 +1,4 @@
+## src\main.py
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -54,6 +55,7 @@ async def startup_event():
 
 def init_nominas_db():
     """Inicializa la base de datos SQLite para nóminas"""
+    """
     conn = sqlite3.connect("HANA.db")
     cursor = conn.cursor()
     
@@ -77,7 +79,8 @@ def init_nominas_db():
     conn.commit()
     conn.close()
     print("✅ Tabla de nóminas creada correctamente en HANA.db")
-
+    """
+    
 # Incluir routers
 app.include_router(pqrsf_routes.router)
 app.include_router(register_routes.router)
@@ -128,6 +131,7 @@ async def crear_nomina(
     documento: Optional[UploadFile] = File(None)
 ):
     try:
+        """
         conn = sqlite3.connect("HANA.db")
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
@@ -172,7 +176,7 @@ async def crear_nomina(
                 "message": "Nómina creada exitosamente",
                 "documento_url": f"/uploads/{documento.filename}" if documento else None
             }
-        )
+        )"""
         
     except Exception as e:
         raise HTTPException(

@@ -1,3 +1,4 @@
+## src\models\register.py
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, Enum, DateTime
@@ -23,14 +24,11 @@ class User(Base):
     role = Column(String(255), nullable=False)
     identification_number = Column(String(255), nullable=False, unique=True)
     email = Column(String(255), unique=True, nullable=False)
-    permissions = Column(Enum('develop', 'accountant', 'client', 'total', name='permissions_enum'), 
-                      nullable=False)
+    permissions = Column(Enum('develop', 'accountant', 'client', 'total', name='permissions_enum'), nullable=False)
     password_hash = Column(String(128), nullable=False)
-    status = Column(Enum('activo', 'inactivo', 'pendiente', name='status_enum'),
-                   nullable=False, default='pendiente')
+    status = Column(Enum('activo', 'inactivo', 'pendiente', name='status_enum'),nullable=False, default='pendiente')
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), 
-                      onupdate=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc),onupdate=lambda: datetime.now(timezone.utc))
     
     logins = relationship("Login", back_populates="user")
 
