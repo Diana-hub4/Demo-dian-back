@@ -50,15 +50,6 @@ async def create_new_nomina(nomina: NominaRequest, db: SessionLocal = Depends(ge
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
-# Endpoint para obtener todas las nóminas
-@router.get("/nomina", response_model=List[NominaResponse])
-async def get_all_nominas(db: SessionLocal = Depends(get_db)):
-    try:
-        nominas = db.query(Nomina).all()
-        return nominas
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 # Endpoint para obtener una nómina por ID
 @router.post("/", response_model=NominaResponse)
 async def create_nomina(

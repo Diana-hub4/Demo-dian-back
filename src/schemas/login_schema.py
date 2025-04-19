@@ -4,6 +4,8 @@ from datetime import datetime
 from typing import Optional
 from marshmallow import Schema, fields
 
+
+
 # Modelo de solicitud para crear un usuario
 class UserRequest(BaseModel):
     email: str = Field(..., description="Correo electrónico del usuario")
@@ -15,10 +17,6 @@ class UserResponse(BaseModel):
     email: str = Field(..., description="Correo electrónico del usuario")
 
 # Modelo de solicitud para registrar un inicio de sesión
-class LoginRequest(BaseModel):
-    email: Optional[str] = Field(None, description="Correo electrónico del usuario")
-    password: str = Field(..., description="Contraseña")
-
 class LoginResponse(BaseModel):
     access_token: str = Field(..., description="Token JWT")
     token_type: str = Field(..., description="Tipo de token")

@@ -9,18 +9,6 @@ class LoginLogic:
     def __init__(self, db_session: Session):
         self.db = db_session
 
-    def authenticate_user(self, email: str, password: str) -> Optional[User]:
-        """
-        Autentica a un usuario verificando su correo electrónico y contraseña.
-        :param email: Correo electrónico del usuario.
-        :param password: Contraseña del usuario.
-        :return: Objeto User si las credenciales son válidas, None si no lo son.
-        """
-        user = self.db.query(User).filter(User.email == email).first()  # Busca al usuario por correo electrónico
-        if user and user.check_password(password):  # Verifica la contraseña
-            return user
-        return None
-
     def register_login(self, user_id: str) -> Login:
         """
         Registra un nuevo inicio de sesión en la tabla login.

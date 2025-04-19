@@ -33,9 +33,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-class LoginRequest(BaseModel):
-    email: str
-    password: str
 
 # Configuración para archivos estáticos
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -111,10 +108,13 @@ async def descargar_guia():
         media_type="application/pdf"
     )
 
+""" 
+
 @app.post("/login")
 def login_user(request: LoginRequest):
     # Aquí iría tu lógica para validar el usuario
     return {"message": "Login successful"}
+"""
 
 # Endpoint para nóminas
 @app.post("/api/nominas")
@@ -184,5 +184,3 @@ async def crear_nomina(
             detail=str(e)
         )
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)

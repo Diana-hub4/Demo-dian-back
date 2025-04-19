@@ -4,27 +4,23 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, HTTPException, Depends
 from src.models.login import authenticate_user, Login, register_login
-from src.schemas.login_schema import LoginRequest, LoginResponse
 from src.database import get_db
 import jwt
 from src.config import settings
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import status
 from pydantic import BaseModel
-from src.schemas.login_schema import LoginRequest, LoginResponse, Token 
+from src.schemas.login_schema import LoginResponse, Token 
 from src.models.register import User
 from sqlalchemy import Column, String
+from src.routes.auth_routes import LoginRequest
 
 router = APIRouter()
 
 # Configuración JWT
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-class LoginRequest(BaseModel):
-    email: str | None = None
-    username: str | None = None
-    password: str
+ACCESS_TOKEN_EXPIRE_MINUTES = 120
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
